@@ -1,3 +1,9 @@
+"""
+This module provides functions to check on the status of a wed
+editor located at ``window.wed_editor``. Reading private variables
+directly is fair game here.
+
+"""
 import time
 
 import selenium.webdriver.support.expected_conditions as EC
@@ -255,6 +261,15 @@ def gui_root(util):
     :param util: The selenic util object.
     :type util: :class:`selenic.util.Util`
     :returns: The root.
-    :rtype: class:`selenium.webdriver.remote.webelement.WebElement`
+    :rtype: :class:`selenium.webdriver.remote.webelement.WebElement`
     """
     return util.driver.execute_script("return window.wed_editor.gui_root")
+
+
+def get_label_visibility_level(util):
+    """
+    :returns: The visibility level.
+    :rtype: :class:`int`
+    """
+    return util.driver.execute_script(
+        "return window.wed_editor._current_label_level;")
