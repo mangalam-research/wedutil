@@ -154,19 +154,29 @@ def select_text(driver, start, end):
 
 def point_in_selection(driver):
     """
+    This method will get the coordinates of a point inside the
+    selection. It is limited in that the start of the current range
+    must be in a text node and start before the end of text in the
+    node.
+
     :returns: A point inside the current selection. With the keys
               ``"x"`` and ``"y"`` set to the coordinates of the
               point. The coordinates are relative to the screen.
     :rtype: class:`dict`
-
     """
     return driver.execute_script("""
     var sel = wed_editor.my_window.getSelection();
-    var range;
     if (sel.rangeCount === 0)
         return undefined;
 
-    range = sel.getRangeAt(0);
+    var range = sel.getRangeAt(0).cloneRange();
+    if (range.startContainer.nodeType !== Node.TEXT_NODE)
+        return undefined;
+
+    if (range.startOffset >= range.startContainer.nodeValue.length)
+        return undefined;
+
+    range.collapse(true);
     var rect = range.getBoundingClientRect();
     // Return a position just inside the rect.
     var pos = {x: rect.left + 1, y: rect.top + 1};
