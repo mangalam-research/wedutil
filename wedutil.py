@@ -254,6 +254,20 @@ def wait_until_a_context_menu_is_not_visible(util):
         (By.CLASS_NAME, "wed-context-menu")))
 
 
+def wait_until_no_tooltip(util):
+    """
+    Waits until no tooltip is displayed.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+
+    # The way we use tooltips, no tooltip displayed happens when there is
+    # no tooltip as a child of body.
+    util.wait_until_not(EC.presence_of_element_located(
+        (By.CSS_SELECTOR, "body>.tooltip")))
+
+
 def gui_root(util):
     """
     Gets the editor's GUI root.
