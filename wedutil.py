@@ -177,6 +177,7 @@ def point_in_selection(driver):
         return undefined;
 
     range.collapse(true);
+    range.setEnd(range.startContainer, range.startOffset + 1);
     var rect = range.getBoundingClientRect();
     // Return a position just inside the rect.
     var pos = {x: rect.left + 1, y: rect.top + 1};
