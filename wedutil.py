@@ -298,3 +298,14 @@ def get_label_visibility_level(util):
     """
     return util.driver.execute_script(
         "return window.wed_editor._current_label_level;")
+
+
+def is_fatal_modal_present(util):
+    """
+    Tests whether the modal that is shown for fatal errors is present
+    on the screen.
+
+    :returns: Whether it is present or not.
+    :rtype: :class:`bool`
+    """
+    return len(util.driver.find_elements_by_class_name("wed-fatal-modal")) > 0
