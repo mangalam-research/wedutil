@@ -4,7 +4,6 @@ editor located at ``window.wed_editor``. Reading private variables
 directly is fair game here.
 
 """
-import time
 
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -111,12 +110,13 @@ def select_text(driver, start, end):
     # So...
     #
 
-    # execute_async_script would be ideal here but for this issue:
+    # If this code fails, look at this issue:
     # http://code.google.com/p/selenium/issues/detail?id=6353
-    driver.execute_script("""
+    driver.execute_async_script("""
     var $ = jQuery;
     var start = arguments[0];
     var end = arguments[1];
+    var done = arguments[2];
     var scroll_top = document.body.scrollTop;
     var scroll_left = document.body.scrollLeft;
     var $gui_root = wed_editor.$gui_root;
@@ -146,10 +146,13 @@ def select_text(driver, start, end):
         event.pageY = end.top + scroll_top;
         event.which = 1;
         $gui_root.trigger(event);
+        var sel = window.getSelection();
+        if (!sel.rangeCount || sel.getRangeAt(0).collapsed)
+            throw new Error("no selection");
+        done();
       }, 10);
     }, 10);
     """, start, end)
-    time.sleep(0.2)
 
 
 def point_in_selection(driver):
