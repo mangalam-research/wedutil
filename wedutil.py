@@ -41,8 +41,9 @@ def caret_pos(driver):
     """
     pos = driver.execute_script("""
     var pos = wed_editor._$fake_caret.offset();
-    pos.top -= document.body.scrollTop;
-    pos.left -= document.body.scrollLeft;
+    var $document = jQuery(document);
+    pos.top -= $document.scrollTop();
+    pos.left -= $document.scrollLeft();
     return pos;
     """)
 
@@ -68,8 +69,9 @@ def caret_selection_pos(driver):
     """
     pos = driver.execute_script("""
     var pos = wed_editor._$fake_caret.offset();
-    pos.top -= document.body.scrollTop;
-    pos.left -= document.body.scrollLeft;
+    var $document = jQuery(document);
+    pos.top -= $document.scrollTop();
+    pos.left -= $document.scrollLeft();
     pos.top += wed_editor._$fake_caret.height() / 2;
     return pos;
     """)
@@ -117,8 +119,9 @@ def select_text(driver, start, end):
     var start = arguments[0];
     var end = arguments[1];
     var done = arguments[2];
-    var scroll_top = document.body.scrollTop;
-    var scroll_left = document.body.scrollLeft;
+    var $document = $(document);
+    var scroll_top = $document.scrollTop();
+    var scroll_left = $document.scrollLeft();
     var $gui_root = wed_editor.$gui_root;
     var event = new $.Event("mousedown");
     event.target = wed_editor.elementAtPointUnderLayers(start.left, start.top);
