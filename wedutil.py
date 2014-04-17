@@ -5,8 +5,15 @@ directly is fair game here.
 
 """
 
+from distutils.version import StrictVersion
+
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
+import selenium
+
+if StrictVersion(selenium.__version__) > StrictVersion("2.41.0"):
+    raise Exception("check whether you still need the cut "
+                    "rigmarole on OS X in this version of Selenium")
 
 
 def wait_for_caret_to_be_in(util, element):
@@ -211,6 +218,7 @@ def set_window_size(util, width, height):
     var width = wed_editor.$gui_root.width();
     return {height: height, width: width};
     """)
+
     driver.set_window_size(width, height)
 
     def cond(*_):
@@ -315,3 +323,19 @@ def is_fatal_modal_present(util):
     :rtype: :class:`bool`
     """
     return len(util.driver.find_elements_by_class_name("wed-fatal-modal")) > 0
+
+
+def cut(util):
+    """
+    Initiates a cut operation.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+    util.ctrl_equivalent_x("x")
+
+    # It seems that Selenium does not support native events at all on OS X.
+    if util.osx:
+        util.driver.execute_script("""
+        wed_editor.$gui_root.trigger("cut");
+        """)
