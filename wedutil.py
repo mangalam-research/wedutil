@@ -5,13 +5,15 @@ directly is fair game here.
 
 """
 
+import os
 from distutils.version import StrictVersion
 
 import selenium.webdriver.support.expected_conditions as EC
 from selenium.webdriver.common.by import By
 import selenium
 
-if StrictVersion(selenium.__version__) > StrictVersion("2.41.0"):
+if not os.environ.get("WEDUTIL_SKIP_OSX_CHECK", False) \
+   and StrictVersion(selenium.__version__) > StrictVersion("2.41.0"):
     raise Exception("check whether you still need the cut "
                     "rigmarole on OS X in this version of Selenium")
 
