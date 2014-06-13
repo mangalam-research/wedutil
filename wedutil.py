@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 import selenium
 
 if not os.environ.get("WEDUTIL_SKIP_OSX_CHECK", False) \
-   and StrictVersion(selenium.__version__) > StrictVersion("2.41.0"):
+   and StrictVersion(selenium.__version__) > StrictVersion("2.42.1"):
     raise Exception("check whether you still need the cut "
                     "rigmarole on OS X in this version of Selenium")
 
