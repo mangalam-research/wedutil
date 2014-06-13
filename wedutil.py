@@ -16,24 +16,38 @@ if StrictVersion(selenium.__version__) > StrictVersion("2.41.0"):
                     "rigmarole on OS X in this version of Selenium")
 
 
+def is_caret_in(util, element):
+    """
+    Tests whether the caret is in the element.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    :param element: The DOM element.
+    :type element: This can be a jQuery selector or
+          :class:`selenium.webdriver.remote.webelement.WebElement`
+    """
+    driver = util.driver
+
+    return driver.execute_script("""
+    var $ = jQuery;
+    var element = arguments[0];
+    var caret = wed_editor._raw_caret;
+    return caret && $(caret.node).closest($(element)).length > 0;
+    """, element)
+
+
 def wait_for_caret_to_be_in(util, element):
     """
     Waits for the caret to be in an element.
 
     :param util: The selenic util object.
     :type util: :class:`selenic.util.Util`
+    :param element: The DOM element.
+    :type element: This can be a jQuery selector or
+          :class:`selenium.webdriver.remote.webelement.WebElement`
     """
-    driver = util.driver
 
-    def condition(*_):
-        return driver.execute_script("""
-        var $ = jQuery;
-        var element = arguments[0];
-        var caret = wed_editor.getGUICaret();
-        var ret = $(caret.node).closest(element).length > 0;
-        return ret;
-        """, element)
-    util.wait(condition)
+    util.wait(lambda driver: is_caret_in(util, element))
 
 
 def caret_pos(driver):
