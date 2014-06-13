@@ -371,3 +371,72 @@ def paste(util):
         suite.""")
 
     util.ctrl_equivalent_x("v")
+
+
+def select_text_of_element_directly(util, selector):
+    """
+    This function is meant to be used to select text by direct
+    manipulation of the DOM. This is meant for tests where we want to
+    select text but we are not testing selection per se.
+
+    .. warning:: This function will fail if an element has more than a
+                 single text node.
+    """
+    driver = util.driver
+    text = driver.execute_script("""
+    var selector = arguments[0];
+    var $el = jQuery(selector);
+    var $text = $el.contents().filter(function () {
+        return this.nodeType === Node.TEXT_NODE;
+    });
+    if ($text.length !== 1)
+        throw new Error("the element must have exactly one text node");
+    var range = $el[0].ownerDocument.createRange();
+    range.selectNodeContents($text[0]);
+    // This messes up our previous selection...
+    wed_editor.setGUICaret(range.startContainer, range.startOffset);
+    // ... so we need to reselect.
+    range.selectNodeContents($text[0]);
+    wed_editor.setSelectionRange(range);
+    return wed_editor.getSelectionRange().toString();
+    """, selector)
+
+    return text
+
+
+def select_contents_directly(util, selector):
+    """
+    This function is meant to be used to select text by direct
+    manipulation of the DOM. This is meant for tests where we want to
+    select text but we are not testing selection per se.
+    """
+    text = util.driver.execute_script("""
+    var $el = jQuery(arguments[0]);
+    var el = $el[0];
+    wed_editor.setGUICaret(el, el.childNodes.length);
+    var range = el.ownerDocument.createRange();
+    range.selectNodeContents(el);
+    wed_editor.setDOMSelectionRange(range);
+    return range.toString();
+    """, selector)
+
+    return text
+
+
+def select_directly(util, start_container, start_offset,
+                    end_container, end_offset):
+    """
+    This function is meant to be used to select text by direct
+    manipulation of the DOM. This is meant for tests where we want to
+    select text but we are not testing selection per se.
+    """
+    text = util.driver.execute_script("""
+    wed_editor.setGUICaret(arguments[0], arguments[1]);
+    var range = arguments[0].ownerDocument.createRange();
+    range.setStart(arguments[0], arguments[1]);
+    range.setEnd(arguments[2], arguments[3]);
+    wed_editor.setDOMSelectionRange(range);
+    return range.toString();
+    """, start_container, start_offset, end_container, end_offset)
+
+    return text
