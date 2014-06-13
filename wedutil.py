@@ -353,3 +353,21 @@ def cut(util):
         util.driver.execute_script("""
         wed_editor.$gui_root.trigger("cut");
         """)
+
+
+def paste(util):
+    """
+    Initiates a paste operation.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+
+    # It seems that Selenium does not support native events at all on OS X.
+    if util.osx:
+        raise Exception("""
+        this cannot work on OS X. OS X does not support native events and a
+        'paste' event cannot be simulated to the extent needed for the test
+        suite.""")
+
+    util.ctrl_equivalent_x("v")
