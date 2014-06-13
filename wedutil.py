@@ -103,7 +103,7 @@ def caret_selection_pos(driver):
     return pos
 
 
-def select_text(driver, start, end):
+def select_text(driver, start, end, no_selection=False):
     """
     Sends commands to a Selenium driver to select text.
 
@@ -114,6 +114,11 @@ def select_text(driver, start, end):
     :param end: The end coordinates where to end the selection.
     :type end: ``{"left": x, "top": y}`` where ``x`` and ``y`` are
                  the coordinates.
+    :param no_selection: ``True`` if we don't expect an active
+                         selection after the operation. This is useful
+                         for tests that are not supposed to change the
+                         selection.
+    :type no_selection: :class:`bool`
     """
 
     #
@@ -139,7 +144,8 @@ def select_text(driver, start, end):
     var $ = jQuery;
     var start = arguments[0];
     var end = arguments[1];
-    var done = arguments[2];
+    var no_selection = arguments[2];
+    var done = arguments[3];
     var $document = $(document);
     var scroll_top = $document.scrollTop();
     var scroll_left = $document.scrollLeft();
@@ -171,12 +177,12 @@ def select_text(driver, start, end):
         event.which = 1;
         $gui_root.trigger(event);
         var sel = window.getSelection();
-        if (!sel.rangeCount || sel.getRangeAt(0).collapsed)
+        if (!no_selection && (!sel.rangeCount || sel.getRangeAt(0).collapsed))
             throw new Error("no selection");
         done();
       }, 10);
     }, 10);
-    """, start, end)
+    """, start, end, no_selection)
 
 
 def point_in_selection(driver):
