@@ -290,6 +290,30 @@ def wait_for_first_validation_complete(util):
         util.wait(cond)
 
 
+def wait_for_validation_complete(util):
+    """
+    Waits until the current validation is finished.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+    driver = util.driver
+
+    def cond(*_):
+        return driver.execute_async_script("""
+        var done = arguments[0];
+        require(["wed/validator"], function (validator) {
+            var state = window.wed_editor &&
+                wed_editor.validator.getWorkingState().state;
+            done(state === validator.VALID ||
+                 state === validator.INVALID);
+        });
+        """)
+
+    with util.local_timeout(5):
+        util.wait(cond)
+
+
 def wait_until_a_context_menu_is_not_visible(util):
     """
     Waits until a context menu is not visible.
