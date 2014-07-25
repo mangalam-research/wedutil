@@ -33,7 +33,7 @@ def is_caret_in(util, element):
     return driver.execute_script("""
     var $ = jQuery;
     var element = arguments[0];
-    var caret = wed_editor._raw_caret;
+    var caret = wed_editor.getGUICaret(true);
     return caret && $(caret.node).closest($(element)).length > 0;
     """, element)
 
