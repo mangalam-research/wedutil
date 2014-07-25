@@ -100,91 +100,9 @@ def caret_selection_pos(driver):
     """)
 
     # ChromeDriver chokes on float values.
-    pos["left"] = int(pos["left"])
-    pos["top"] = int(pos["top"])
+    pos["left"] = round(pos["left"])
+    pos["top"] = round(pos["top"])
     return pos
-
-
-def select_text(driver, start, end, no_selection=False):
-    """
-    Sends commands to a Selenium driver to select text.
-
-    :param driver: The Selenium driver to operate on.
-    :param start: The start coordinates where to start the selection.
-    :type start: ``{"left": x, "top": y}`` where ``x`` and ``y`` are
-                 the coordinates.
-    :param end: The end coordinates where to end the selection.
-    :type end: ``{"left": x, "top": y}`` where ``x`` and ``y`` are
-                 the coordinates.
-    :param no_selection: ``True`` if we don't expect an active
-                         selection after the operation. This is useful
-                         for tests that are not supposed to change the
-                         selection.
-    :type no_selection: :class:`bool`
-    """
-
-    #
-    # This does not work...
-    #
-    # from selenium.webdriver.common.action_chains import ActionChains
-    #
-    # gui_root = driver.find_element_by_class_name("wed-document")
-    #
-    # ActionChains(driver)\
-    #     .move_to_element_with_offset(gui_root, start["left"], start["top"])\
-    #     .click_and_hold()\
-    #     .move_to_element_with_offset(gui_root, end["left"], end["top"])\
-    #     .release()\
-    #     .perform()
-    #
-    # So...
-    #
-
-    # If this code fails, look at this issue:
-    # http://code.google.com/p/selenium/issues/detail?id=6353
-    driver.execute_async_script("""
-    var $ = jQuery;
-    var start = arguments[0];
-    var end = arguments[1];
-    var no_selection = arguments[2];
-    var done = arguments[3];
-    var $document = $(document);
-    var scroll_top = $document.scrollTop();
-    var scroll_left = $document.scrollLeft();
-    var $gui_root = wed_editor.$gui_root;
-    var event = new $.Event("mousedown");
-    event.target = wed_editor.elementAtPointUnderLayers(start.left, start.top);
-    event.clientX = start.left;
-    event.clientY = start.top;
-    event.pageX = start.left + scroll_left;
-    event.pageY = start.top + scroll_top;
-    event.which = 1;
-    $gui_root.trigger(event);
-    setTimeout(function () {
-      var event = new $.Event("mousemove");
-      event.target = wed_editor.elementAtPointUnderLayers(end.left, end.top);
-      event.clientX = end.left;
-      event.clientY = end.top;
-      event.pageX = end.left + scroll_left;
-      event.pageY = end.top + scroll_top;
-      $gui_root.trigger(event);
-      setTimeout(function () {
-        var event = new $.Event("mouseup");
-        // Recompute in the off-chance that something moved.
-        event.target = wed_editor.elementAtPointUnderLayers(end.left, end.top);
-        event.clientX = end.left;
-        event.clientY = end.top;
-        event.pageX = end.left + scroll_left;
-        event.pageY = end.top + scroll_top;
-        event.which = 1;
-        $gui_root.trigger(event);
-        var sel = window.getSelection();
-        if (!no_selection && (!sel.rangeCount || sel.getRangeAt(0).collapsed))
-            throw new Error("no selection");
-        done();
-      }, 10);
-    }, 10);
-    """, start, end, no_selection)
 
 
 def point_in_selection(driver):
