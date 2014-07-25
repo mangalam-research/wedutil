@@ -52,7 +52,7 @@ def wait_for_caret_to_be_in(util, element):
     util.wait(lambda driver: is_caret_in(util, element))
 
 
-def caret_pos(driver):
+def caret_screen_pos(driver):
     """
     Gets the ``x, y`` position of the caret relative to the
     screen.
