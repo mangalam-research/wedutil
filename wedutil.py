@@ -9,6 +9,7 @@ import os
 from distutils.version import StrictVersion
 
 import selenium.webdriver.support.expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 import selenium
 
@@ -50,6 +51,31 @@ def wait_for_caret_to_be_in(util, element):
     """
 
     util.wait(lambda driver: is_caret_in(util, element))
+
+
+def click_until_caret_in(util, element):
+    """
+    Clicks on an element until the caret is in it. This is needed due
+    to the asynchronous nature of wed. Between the time Selenium gets
+    the coordinates of an element and the time it performs the click,
+    there seem to be an opportunity for the JavaScript code of wed to
+    make changes to the UI that can push the element away from the
+    coordinates that Selenium got. (Especially the case on FF.)
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    :param element: The DOM element.
+    :type element: This can be a jQuery selector or
+          :class:`selenium.webdriver.remote.webelement.WebElement`
+    """
+
+    while True:
+        ActionChains(util.driver) \
+            .click(element) \
+            .perform()
+
+        if is_caret_in(util, element):
+            break
 
 
 def caret_screen_pos(driver):
