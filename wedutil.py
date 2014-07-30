@@ -366,7 +366,7 @@ def select_contents_directly(util, selector):
     wed_editor.setGUICaret(el, el.childNodes.length);
     var range = el.ownerDocument.createRange();
     range.selectNodeContents(el);
-    wed_editor.setDOMSelectionRange(range);
+    wed_editor.setSelectionRange(range);
     return range.toString();
     """, selector)
 
@@ -385,7 +385,7 @@ def select_directly(util, start_container, start_offset,
     var range = arguments[0].ownerDocument.createRange();
     range.setStart(arguments[0], arguments[1]);
     range.setEnd(arguments[2], arguments[3]);
-    wed_editor.setDOMSelectionRange(range);
+    wed_editor.setSelectionRange(range);
     return range.toString();
     """, start_container, start_offset, end_container, end_offset)
 
