@@ -385,6 +385,9 @@ def select_contents_directly(util, selector):
     This function is meant to be used to select text by direct
     manipulation of the DOM. This is meant for tests where we want to
     select text but we are not testing selection per se.
+
+    :returns: The text of the selection. This is the text as
+    understood by wed, so _phantom nodes are excluded.
     """
     text = util.driver.execute_script("""
     var $el = jQuery(arguments[0]);
@@ -393,7 +396,11 @@ def select_contents_directly(util, selector):
     var range = el.ownerDocument.createRange();
     range.selectNodeContents(el);
     wed_editor.setSelectionRange(range);
-    return range.toString();
+    var clone = range.cloneContents();
+    var phantoms = clone.querySelectorAll("._phantom");
+    for (var i = 0, phantom; (phantom = phantoms[i]) !== undefined; ++i)
+        phantom.parentNode.removeChild(phantom);
+    return clone.textContent;
     """, selector)
 
     return text
