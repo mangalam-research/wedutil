@@ -14,7 +14,10 @@ from selenium.webdriver.common.by import By
 import selenium
 
 if not os.environ.get("WEDUTIL_SKIP_OSX_CHECK", False) \
-   and StrictVersion(selenium.__version__) > StrictVersion("2.42.1"):
+   and StrictVersion(selenium.__version__) > StrictVersion("2.43.0"):
+    # This check is performed by running a test that uses the cut()
+    # function below. Run the test without the osx specific code. If
+    # the test passes, then the rigmarole is no longer needed.
     raise Exception("check whether you still need the cut "
                     "rigmarole on OS X in this version of Selenium")
 
