@@ -56,7 +56,7 @@ def wait_for_caret_to_be_in(util, element):
     util.wait(lambda driver: is_caret_in(util, element))
 
 
-def click_until_caret_in(util, element):
+def click_until_caret_in(util, element, target=None):
     """
     Clicks on an element until the caret is in it. This is needed due
     to the asynchronous nature of wed. Between the time Selenium gets
@@ -67,17 +67,25 @@ def click_until_caret_in(util, element):
 
     :param util: The selenic util object.
     :type util: :class:`selenic.util.Util`
-    :param element: The DOM element.
-    :type element: This can be a jQuery selector or
+    :param element: The DOM element on which to click.
+    :type element:
+          :class:`selenium.webdriver.remote.webelement.WebElement`
+    :param target: The DOM element in which the caret should be. If
+                   not specified, it is assumed to be the same as
+                   ``element``.
+    :type target:
           :class:`selenium.webdriver.remote.webelement.WebElement`
     """
+
+    if target is None:
+        target = element
 
     while True:
         ActionChains(util.driver) \
             .click(element) \
             .perform()
 
-        if is_caret_in(util, element):
+        if is_caret_in(util, target):
             break
 
 
