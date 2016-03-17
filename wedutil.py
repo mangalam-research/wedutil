@@ -201,7 +201,7 @@ def set_window_size(util, width, height):
     util.wait(cond)
 
 
-def wait_for_editor(util):
+def wait_for_editor(util, timeout=15):
     """
     Waits until the editor is initialized.
 
@@ -215,7 +215,7 @@ def wait_for_editor(util):
             "return window.wed_editor && " +
             "wed_editor.getCondition('initialized');")
 
-    with util.local_timeout(15):
+    with util.local_timeout(timeout):
         util.wait(cond)
 
 
