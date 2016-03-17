@@ -19,7 +19,8 @@ if not os.environ.get("WEDUTIL_SKIP_OSX_CHECK", False) \
     # function below. Run the test without the osx specific code. If
     # the test passes, then the rigmarole is no longer needed.
     raise Exception("check whether you still need the cut "
-                    "rigmarole on OS X in this version of Selenium")
+                    "rigmarole on OS X in this version ({0}) of Selenium"
+                    .format(selenium.__version__))
 
 
 def is_caret_in(util, element):
