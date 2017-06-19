@@ -38,7 +38,7 @@ def is_caret_in(util, element):
     return driver.execute_script("""
     var $ = jQuery;
     var element = arguments[0];
-    var caret = wed_editor.getGUICaret(true);
+    var caret = wed_editor.caretManager.caret;
     return caret && $(caret.node).closest($(element)).length > 0;
     """, element)
 
@@ -101,11 +101,8 @@ def caret_screen_pos(driver):
             the coordinates.
     """
     pos = driver.execute_script("""
-    var pos = wed_editor._$fake_caret.offset();
-    var $document = jQuery(document);
-    pos.top -= $document.scrollTop();
-    pos.left -= $document.scrollLeft();
-    return pos;
+    var pos = wed_editor._caretMark.getBoundingClientRect();
+    return { left: pos.left, top: pos.top };
     """)
 
     # ChromeDriver chokes on float values.
@@ -129,12 +126,8 @@ def caret_selection_pos(driver):
             the coordinates.
     """
     pos = driver.execute_script("""
-    var pos = wed_editor._$fake_caret.offset();
-    var $document = jQuery(document);
-    pos.top -= $document.scrollTop();
-    pos.left -= $document.scrollLeft();
-    pos.top += wed_editor._$fake_caret.height() / 2;
-    return pos;
+    var pos = wed_editor._caretMark.getBoundingClientRect();
+    return { left: pos.left, top: pos.top + pos.height / 2};
     """)
 
     # ChromeDriver chokes on float values.
@@ -379,14 +372,10 @@ def select_text_of_element_directly(util, selector):
     });
     if ($text.length !== 1)
         throw new Error("the element must have exactly one text node");
-    var range = $el[0].ownerDocument.createRange();
-    range.selectNodeContents($text[0]);
-    // This messes up our previous selection...
-    wed_editor.setGUICaret(range.startContainer, range.startOffset);
-    // ... so we need to reselect.
-    range.selectNodeContents($text[0]);
-    wed_editor.setSelectionRange(range);
-    return wed_editor.getSelectionRange().toString();
+    var caretManager = wed_editor.caretManager;
+    var text = $text[0];
+    caretManager.setRange(text, 0, text, text.length);
+    return wed_editor.caretManager.range.toString();
     """, selector)
 
     return text
@@ -404,11 +393,8 @@ def select_contents_directly(util, selector):
     text = util.driver.execute_script("""
     var $el = jQuery(arguments[0]);
     var el = $el[0];
-    wed_editor.setGUICaret(el, el.childNodes.length);
-    var range = el.ownerDocument.createRange();
-    range.selectNodeContents(el);
-    wed_editor.setSelectionRange(range);
-    var clone = range.cloneContents();
+    wed_editor.caretManager.setRange(el, 0, el, el.childNodes.length);
+    var clone = el.cloneNode(true);
     var phantoms = clone.querySelectorAll("._phantom");
     for (var i = 0, phantom; (phantom = phantoms[i]) !== undefined; ++i)
         phantom.parentNode.removeChild(phantom);
@@ -426,11 +412,8 @@ def select_directly(util, start_container, start_offset,
     select text but we are not testing selection per se.
     """
     text = util.driver.execute_script("""
-    wed_editor.setGUICaret(arguments[0], arguments[1]);
-    var range = arguments[0].ownerDocument.createRange();
-    range.setStart(arguments[0], arguments[1]);
-    range.setEnd(arguments[2], arguments[3]);
-    wed_editor.setSelectionRange(range);
+    wed_editor.caretManager.setRange(arguments[0], arguments[1],
+                                     arguments[2], arguments[3]);
     return range.toString();
     """, start_container, start_offset, end_container, end_offset)
 
