@@ -101,7 +101,7 @@ def caret_screen_pos(driver):
             the coordinates.
     """
     pos = driver.execute_script("""
-    var pos = wed_editor._caretMark.getBoundingClientRect();
+    var pos = wed_editor.caretManager.mark.getBoundingClientRect();
     return { left: pos.left, top: pos.top };
     """)
 
@@ -126,7 +126,7 @@ def caret_selection_pos(driver):
             the coordinates.
     """
     pos = driver.execute_script("""
-    var pos = wed_editor._caretMark.getBoundingClientRect();
+    var pos = wed_editor.caretManager.mark.getBoundingClientRect();
     return { left: pos.left, top: pos.top + pos.height / 2};
     """)
 
