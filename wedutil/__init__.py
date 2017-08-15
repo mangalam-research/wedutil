@@ -219,6 +219,7 @@ def wait_for_editor(util, timeout=15):
         var done = arguments[0];
         if (!window.wed_editor) {
           done(false);
+          return;
         }
         wed_editor.initialized.then(function () {
           done(true);
@@ -247,6 +248,7 @@ def wait_for_first_validation_complete(util):
         var done = arguments[0];
         if (!window.wed_editor) {
           done(false);
+          return;
         }
         wed_editor.firstValidationComplete.then(function () {
           done(true)
