@@ -149,7 +149,7 @@ def point_in_selection(driver):
     :rtype: class:`dict`
     """
     return driver.execute_script("""
-    var sel = wed_editor.my_window.getSelection();
+    var sel = wed_editor.window.getSelection();
     if (sel.rangeCount === 0)
         return undefined;
 
@@ -185,8 +185,8 @@ def set_window_size(util, width, height):
     driver = util.driver
 
     orig_size = driver.execute_script("""
-    var height = wed_editor.$gui_root.height();
-    var width = wed_editor.$gui_root.width();
+    var height = wed_editor.$guiRoot.height();
+    var width = wed_editor.$guiRoot.width();
     return {height: height, width: width};
     """)
 
@@ -194,8 +194,8 @@ def set_window_size(util, width, height):
 
     def cond(*_):
         size = driver.execute_script("""
-        var height = wed_editor.$gui_root.height();
-        var width = wed_editor.$gui_root.width();
+        var height = wed_editor.$guiRoot.height();
+        var width = wed_editor.$guiRoot.width();
         return {height: height, width: width};
         """)
         return size != orig_size
@@ -212,32 +212,52 @@ def wait_for_editor(util, timeout=15):
     """
     driver = util.driver
 
+    # We still poll because we have no means to wait for
+    # window.wed_editor to be set.
     def cond(*_):
-        return driver.execute_script(
-            "return window.wed_editor && " +
-            "wed_editor.getCondition('initialized');")
+        return driver.execute_async_script("""
+        var done = arguments[0];
+        if (!window.wed_editor) {
+          done(false);
+        }
+        wed_editor.initialized.then(function () {
+          done(true);
+        });
+        """)
 
+    saved_timeout = util.timeout
+    driver.set_script_timeout(timeout)
     with util.local_timeout(timeout):
         util.wait(cond)
-
+    driver.set_script_timeout(saved_timeout)
 
 def wait_for_first_validation_complete(util):
     """
-    Waits until the editor is initialized.
+    Waits until the first validation is complete.
 
     :param util: The selenic util object.
     :type util: :class:`selenic.util.Util`
     """
     driver = util.driver
 
+    # We still poll because we have no means to wait for
+    # window.wed_editor to be set.
     def cond(*_):
-        return driver.execute_script(
-            "return window.wed_editor && " +
-            "wed_editor.getCondition('first-validation-complete');")
+        return driver.execute_async_script("""
+        var done = arguments[0];
+        if (!window.wed_editor) {
+          done(false);
+        }
+        wed_editor.firstValidationComplete.then(function () {
+          done(true)
+        });
+        """)
 
+    saved_timeout = util.timeout
+    driver.set_script_timeout(15)
     with util.local_timeout(15):
         util.wait(cond)
-
+    driver.set_script_timeout(saved_timeout)
 
 def wait_for_validation_complete(util):
     """
@@ -297,7 +317,7 @@ def gui_root(util):
     :returns: The root.
     :rtype: :class:`selenium.webdriver.remote.webelement.WebElement`
     """
-    return util.driver.execute_script("return window.wed_editor.gui_root")
+    return util.driver.execute_script("return window.wed_editor.guiRoot")
 
 
 def get_label_visibility_level(util):
@@ -306,7 +326,7 @@ def get_label_visibility_level(util):
     :rtype: :class:`int`
     """
     return util.driver.execute_script(
-        "return window.wed_editor._current_label_level;")
+        "return window.wed_editor.currentLabelLevel;")
 
 
 def is_fatal_modal_present(util):
@@ -332,7 +352,7 @@ def cut(util):
     # It seems that Selenium does not support native events at all on OS X.
     if util.osx:
         util.driver.execute_script("""
-        wed_editor.$gui_root.trigger("cut");
+        wed_editor.$guiRoot.trigger("cut");
         """)
 
 
