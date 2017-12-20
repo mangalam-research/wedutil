@@ -414,7 +414,7 @@ def select_directly(util, start_container, start_offset,
     text = util.driver.execute_script("""
     wed_editor.caretManager.setRange(arguments[0], arguments[1],
                                      arguments[2], arguments[3]);
-    return range.toString();
+    return wed_editor.caretManager.range.toString();
     """, start_container, start_offset, end_container, end_offset)
 
     return text
