@@ -14,7 +14,7 @@ from selenium.webdriver.common.by import By
 import selenium
 
 if not os.environ.get("WEDUTIL_SKIP_OSX_CHECK", False) \
-   and StrictVersion(selenium.__version__) > StrictVersion("3.6.0"):
+   and StrictVersion(selenium.__version__) > StrictVersion("3.8.0"):
     # This check is performed by running a test that uses the cut()
     # function below. Run the test without the osx specific code. If
     # the test passes, then the rigmarole is no longer needed.
@@ -102,7 +102,8 @@ def caret_screen_pos(driver):
     """
     pos = driver.execute_script("""
     var pos = wed_editor.caretManager.mark.getBoundingClientRect();
-    return { left: pos.left, top: pos.top };
+    return { left: pos.left,
+             top: pos.top };
     """)
 
     # ChromeDriver chokes on float values.
@@ -127,7 +128,8 @@ def caret_selection_pos(driver):
     """
     pos = driver.execute_script("""
     var pos = wed_editor.caretManager.mark.getBoundingClientRect();
-    return { left: pos.left, top: pos.top + pos.height / 2};
+    return { left: pos.left,
+             top: pos.top + pos.height / 2};
     """)
 
     # ChromeDriver chokes on float values.
