@@ -344,6 +344,24 @@ def is_fatal_modal_present(util):
     return len(util.driver.find_elements_by_class_name("wed-fatal-modal")) > 0
 
 
+def copy(util):
+    """
+    Initiates a copy operation.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+    util.ctrl_equivalent_x("c")
+
+def copy_add(util):
+    """
+    Initiates a copy-add operation.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+    util.ctrl_equivalent_x("C")
+
 def cut(util):
     """
     Initiates a cut operation.
@@ -353,6 +371,15 @@ def cut(util):
     """
     util.ctrl_equivalent_x("x")
 
+
+def cut_add(util):
+    """
+    Initiates a cut-add operation.
+
+    :param util: The selenic util object.
+    :type util: :class:`selenic.util.Util`
+    """
+    util.ctrl_equivalent_x("X")
 
 
 def paste(util):
