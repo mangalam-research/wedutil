@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="wedutil",
-    version="0.21.3",
+    version="0.22.0",
     packages=find_packages(),
     author="Louis-Dominique Dubeau",
     author_email="ldd@lddubeau.com",
