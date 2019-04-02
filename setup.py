@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="wedutil",
-    version="0.22.0",
+    version="0.22.1",
     packages=find_packages(),
     author="Louis-Dominique Dubeau",
     author_email="ldd@lddubeau.com",
@@ -10,9 +10,8 @@ setup(
     license="MPL 2.0",
     keywords=["wed", "selenium", "testing"],
     url="https://github.com/mangalam-research/wedutil",
-    # use_2to3=True,
     classifiers=[
-        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3 :: Only",
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
